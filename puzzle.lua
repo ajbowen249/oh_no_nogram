@@ -13,6 +13,8 @@ function init_puzzle(index)
   g_puzzle_state = {
     puzzle = puzzle,
     grid = {},
+    row_runs = {},
+    col_runs = {},
     x = 1,
     y = 1,
   }
@@ -26,13 +28,34 @@ function init_puzzle(index)
     add(g_puzzle_state.grid, row)
   end
 
+  for row in all(puzzle.image) do
+    local run_length = 0
+    local row_runs = {}
+    for col in all(row) do
+      if col == 1 then
+        run_length += 1
+      else
+        if run_length > 0 then
+          add(row_runs, run_length)
+          run_length = 0
+        end
+      end
+    end
+
+    if run_length > 0 or #row_runs == 0 then
+      add(row_runs, run_length)
+    end
+
+    add(g_puzzle_state.row_runs, row_runs)
+  end
+
   g_game_state = C_PUZZLE
 end
 
 function draw_puzzle()
   cls(13)
-  local start_x = 128 - C_BOARD_SIZE - 5
-  local start_y = 128 - C_BOARD_SIZE - 5
+  local start_x = 128 - C_BOARD_SIZE - 2
+  local start_y = 128 - C_BOARD_SIZE - 2
   local board_end_x = start_x + C_BOARD_SIZE
   local board_end_y = start_y + C_BOARD_SIZE
 
@@ -42,6 +65,26 @@ function draw_puzzle()
   for i, row in ipairs(g_puzzle_state.grid) do
     local y = start_y + ((i - 1) * C_CELL_SIZE)
     rect(start_x, y + C_CELL_SIZE, board_end_x, y + C_CELL_SIZE, 4)
+
+    local row_runs = g_puzzle_state.row_runs[i]
+
+    if i == g_puzzle_state.y then
+      rectfill(2, y, start_x - 1, y + C_CELL_SIZE - 1, 12)
+    end
+
+    for ri=#row_runs, 1, -1 do
+      local run_x = start_x - 5 - ((#row_runs - ri) * 5)
+      local run_val = row_runs[ri]
+      if run_val < 10 then
+        print(run_val, run_x, y, i % 2 == 0 and 4 or 15)
+      else
+        if i % 2 != 0 then
+          pal(4, 15)
+        end
+        spr(run_val - 4, run_x, y)
+        pal()
+      end
+    end
 
     for j, cell in ipairs(row) do
       local x = start_x + ((j - 1) * C_CELL_SIZE)
