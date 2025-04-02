@@ -1,6 +1,10 @@
 g_puzzle_state = nil
+C_STARTING_GAFFES = 10
 C_CELL_SIZE = 6
 C_BOARD_SIZE = C_CELL_SIZE * 15
+
+C_PUZZLE_STATE_PLAYING = 0
+C_PUZZLE_STATE_GAME_OVER = 1
 
 C_PUZ_NULL = 0
 C_PUZ_MARKED = 1
@@ -17,6 +21,8 @@ function init_puzzle(index)
     col_runs = {},
     x = 1,
     y = 1,
+    gaffes = C_STARTING_GAFFES,
+    state = C_PUZZLE_STATE_PLAYING,
   }
 
   for i=1, #puzzle.image do
@@ -58,6 +64,10 @@ end
 
 function draw_puzzle()
   cls(13)
+
+  print("gaffes:", 1, 1, g_puzzle_state.gaffes > 3 and 4 or 8)
+  print(g_puzzle_state.gaffes, 1, 8, g_puzzle_state.gaffes > 3 and 4 or 8)
+
   local start_x = 128 - C_BOARD_SIZE - 2
   local start_y = 128 - C_BOARD_SIZE - 2
   local board_end_x = start_x + C_BOARD_SIZE
@@ -107,6 +117,13 @@ function draw_puzzle()
         cursor_loc = { x = x, y = y }
       end
     end
+
+    if g_puzzle_state.state == C_PUZZLE_STATE_GAME_OVER then
+      rectfill(10, 10, 118, 26, 2)
+      rect(10, 10, 118, 26, 8)
+      print("game over 😐", 40, 12)
+      print("press 🅾️ or ❎", 36, 19)
+    end
   end
 
   if cursor_loc != nil then
@@ -115,6 +132,14 @@ function draw_puzzle()
 end
 
 function update_puzzle()
+  if g_puzzle_state.state == C_PUZZLE_STATE_GAME_OVER then
+    if btnp(4) or btnp(5) then
+      init_puzzle_grid()
+    end
+
+    return
+  end
+
   if btnp(0) and g_puzzle_state.x > 1 then
     g_puzzle_state.x -= 1
   elseif btnp(1) and g_puzzle_state.x < #g_puzzle_state.grid then
@@ -132,6 +157,14 @@ function update_puzzle()
       g_puzzle_state.grid[g_puzzle_state.y][g_puzzle_state.x] = C_PUZ_NULL
     end
   elseif btnp(5) then
-    g_puzzle_state.grid[g_puzzle_state.y][g_puzzle_state.x] = C_PUZ_CHIZ
+    if g_puzzle_state.puzzle.image[g_puzzle_state.y][g_puzzle_state.x] == 0 then
+      g_puzzle_state.gaffes -= 1
+
+      if g_puzzle_state.gaffes <= 0 then
+        g_puzzle_state.state = C_PUZZLE_STATE_GAME_OVER
+      end
+    else
+      g_puzzle_state.grid[g_puzzle_state.y][g_puzzle_state.x] = C_PUZ_CHIZ
+    end
   end
 end
