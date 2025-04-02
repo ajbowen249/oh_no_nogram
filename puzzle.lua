@@ -5,6 +5,7 @@ C_BOARD_SIZE = C_CELL_SIZE * 15
 
 C_PUZZLE_STATE_PLAYING = 0
 C_PUZZLE_STATE_GAME_OVER = 1
+C_PUZZLE_STATE_WIN = 2
 
 C_PUZ_NULL = 0
 C_PUZ_MARKED = 1
@@ -63,7 +64,8 @@ function print_run_number(run_val, run_x, y, i)
 end
 
 function draw_puzzle()
-  if g_puzzle_state.state == C_PUZZLE_STATE_PLAYING then
+  local is_win = g_puzzle_state.state == C_PUZZLE_STATE_WIN
+  if g_puzzle_state.state == C_PUZZLE_STATE_PLAYING or is_win then
     cls(13)
 
     print("gaffes:", 1, 1, g_puzzle_state.gaffes > 3 and 4 or 8)
@@ -80,7 +82,10 @@ function draw_puzzle()
 
     for i, row in ipairs(g_puzzle_state.grid) do
       local y = start_y + ((i - 1) * C_CELL_SIZE)
-      rect(start_x, y + C_CELL_SIZE, board_end_x, y + C_CELL_SIZE, 4)
+
+      if not is_win then
+        rect(start_x, y + C_CELL_SIZE, board_end_x, y + C_CELL_SIZE, 4)
+      end
 
       if i == g_puzzle_state.y then
         rectfill(2, y, start_x - 1, y + C_CELL_SIZE - 1, 12)
@@ -95,7 +100,9 @@ function draw_puzzle()
       for j, cell in ipairs(row) do
         local x = start_x + ((j - 1) * C_CELL_SIZE)
         if i == 1 then
-          rect(x + C_CELL_SIZE, start_y, x + C_CELL_SIZE, board_end_y, 4)
+          if not is_win then
+            rect(x + C_CELL_SIZE, start_y, x + C_CELL_SIZE, board_end_y, 4)
+          end
 
           if j == g_puzzle_state.x then
             rectfill(x, 2, x + C_CELL_SIZE - 1, start_y - 1, 12)
@@ -108,10 +115,10 @@ function draw_puzzle()
           end
         end
 
-        if cell == C_PUZ_MARKED then
+        if cell == C_PUZ_MARKED and not is_win then
           spr(4, x + 1, y + 1)
         elseif cell == C_PUZ_CHIZ then
-          spr(5, x + 1, y + 1)
+          spr(is_win and 21 or 5, x + 1, y + 1)
         end
 
         if i == g_puzzle_state.y and j == g_puzzle_state.x then
@@ -119,20 +126,42 @@ function draw_puzzle()
         end
       end
 
-      if cursor_loc != nil then
+      if cursor_loc != nil and not is_win then
         spr(2, cursor_loc.x, cursor_loc.y)
       end
+    end
+
+    if g_puzzle_state.state == C_PUZZLE_STATE_WIN then
+      rectfill(10, 10, 118, 32, 3)
+      rect(10, 10, 118, 32, 11)
+      local name_len = get_string_pixel_width(g_puzzle_state.puzzle.name)
+      local name_x = (128 - name_len) / 2
+      print("solved!", 50, 12, 11)
+      print(g_puzzle_state.puzzle.name, name_x, 19, 11)
+      print("press 🅾️ or ❎", 36, 25, 11)
     end
   elseif g_puzzle_state.state == C_PUZZLE_STATE_GAME_OVER then
     rectfill(10, 10, 118, 26, 2)
     rect(10, 10, 118, 26, 8)
-    print("game over 😐", 40, 12)
-    print("press 🅾️ or ❎", 36, 19)
+    print("game over 😐", 40, 12, 8)
+    print("press 🅾️ or ❎", 36, 19, 8)
   end
 end
 
+function is_game_won()
+  for i=1, #g_puzzle_state.grid do
+    for j=1, #g_puzzle_state.grid do
+      if g_puzzle_state.puzzle.image[i][j] == 1 and g_puzzle_state.grid[i][j] != C_PUZ_CHIZ then
+        return false
+      end
+    end
+  end
+
+  return true
+end
+
 function update_puzzle()
-  if g_puzzle_state.state == C_PUZZLE_STATE_GAME_OVER then
+  if g_puzzle_state.state == C_PUZZLE_STATE_GAME_OVER or g_puzzle_state.state == C_PUZZLE_STATE_WIN then
     if btnp(4) or btnp(5) then
       init_puzzle_grid()
     end
@@ -166,5 +195,9 @@ function update_puzzle()
     else
       g_puzzle_state.grid[g_puzzle_state.y][g_puzzle_state.x] = C_PUZ_CHIZ
     end
+  end
+
+  if is_game_won() then
+    g_puzzle_state.state = C_PUZZLE_STATE_WIN
   end
 end
