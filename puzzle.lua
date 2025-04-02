@@ -63,71 +63,71 @@ function print_run_number(run_val, run_x, y, i)
 end
 
 function draw_puzzle()
-  cls(13)
+  if g_puzzle_state.state == C_PUZZLE_STATE_PLAYING then
+    cls(13)
 
-  print("gaffes:", 1, 1, g_puzzle_state.gaffes > 3 and 4 or 8)
-  print(g_puzzle_state.gaffes, 1, 8, g_puzzle_state.gaffes > 3 and 4 or 8)
+    print("gaffes:", 1, 1, g_puzzle_state.gaffes > 3 and 4 or 8)
+    print(g_puzzle_state.gaffes, 1, 8, g_puzzle_state.gaffes > 3 and 4 or 8)
 
-  local start_x = 128 - C_BOARD_SIZE - 2
-  local start_y = 128 - C_BOARD_SIZE - 2
-  local board_end_x = start_x + C_BOARD_SIZE
-  local board_end_y = start_y + C_BOARD_SIZE
+    local start_x = 128 - C_BOARD_SIZE - 2
+    local start_y = 128 - C_BOARD_SIZE - 2
+    local board_end_x = start_x + C_BOARD_SIZE
+    local board_end_y = start_y + C_BOARD_SIZE
 
-  rectfill(start_x, start_y, board_end_x, board_end_y, 15)
-  rect(start_x, start_y, board_end_x, board_end_y, 4)
-  local cursor_loc = nil
+    rectfill(start_x, start_y, board_end_x, board_end_y, 15)
+    rect(start_x, start_y, board_end_x, board_end_y, 4)
+    local cursor_loc = nil
 
-  for i, row in ipairs(g_puzzle_state.grid) do
-    local y = start_y + ((i - 1) * C_CELL_SIZE)
-    rect(start_x, y + C_CELL_SIZE, board_end_x, y + C_CELL_SIZE, 4)
+    for i, row in ipairs(g_puzzle_state.grid) do
+      local y = start_y + ((i - 1) * C_CELL_SIZE)
+      rect(start_x, y + C_CELL_SIZE, board_end_x, y + C_CELL_SIZE, 4)
 
-    if i == g_puzzle_state.y then
-      rectfill(2, y, start_x - 1, y + C_CELL_SIZE - 1, 12)
-    end
+      if i == g_puzzle_state.y then
+        rectfill(2, y, start_x - 1, y + C_CELL_SIZE - 1, 12)
+      end
 
-    local row_runs = g_puzzle_state.row_runs[i]
-    for ri=#row_runs, 1, -1 do
-      local run_x = start_x - 5 - ((#row_runs - ri) * 5)
-      print_run_number(row_runs[ri], run_x, y, i)
-    end
+      local row_runs = g_puzzle_state.row_runs[i]
+      for ri=#row_runs, 1, -1 do
+        local run_x = start_x - 5 - ((#row_runs - ri) * 5)
+        print_run_number(row_runs[ri], run_x, y, i)
+      end
 
-    for j, cell in ipairs(row) do
-      local x = start_x + ((j - 1) * C_CELL_SIZE)
-      if i == 1 then
-        rect(x + C_CELL_SIZE, start_y, x + C_CELL_SIZE, board_end_y, 4)
+      for j, cell in ipairs(row) do
+        local x = start_x + ((j - 1) * C_CELL_SIZE)
+        if i == 1 then
+          rect(x + C_CELL_SIZE, start_y, x + C_CELL_SIZE, board_end_y, 4)
 
-        if j == g_puzzle_state.x then
-          rectfill(x, 2, x + C_CELL_SIZE - 1, start_y - 1, 12)
+          if j == g_puzzle_state.x then
+            rectfill(x, 2, x + C_CELL_SIZE - 1, start_y - 1, 12)
+          end
+
+          local col_runs = g_puzzle_state.col_runs[j]
+          for ci=#col_runs, 1, -1 do
+            local run_y = start_y - 5 - ((#col_runs - ci) * 5)
+            print_run_number(col_runs[ci], x + i, run_y, ci)
+          end
         end
 
-        local col_runs = g_puzzle_state.col_runs[j]
-        for ci=#col_runs, 1, -1 do
-          local run_y = start_y - 5 - ((#col_runs - ci) * 5)
-          print_run_number(col_runs[ci], x + i, run_y, ci)
+        if cell == C_PUZ_MARKED then
+          spr(4, x + 1, y + 1)
+        elseif cell == C_PUZ_CHIZ then
+          spr(5, x + 1, y + 1)
+        end
+
+        if i == g_puzzle_state.y and j == g_puzzle_state.x then
+          cursor_loc = { x = x, y = y }
         end
       end
 
-      if cell == C_PUZ_MARKED then
-        spr(4, x + 1, y + 1)
-      elseif cell == C_PUZ_CHIZ then
-        spr(5, x + 1, y + 1)
-      end
-
-      if i == g_puzzle_state.y and j == g_puzzle_state.x then
-        cursor_loc = { x = x, y = y }
+      if cursor_loc != nil then
+        spr(2, cursor_loc.x, cursor_loc.y)
       end
     end
-
-    if g_puzzle_state.state == C_PUZZLE_STATE_GAME_OVER then
-      rectfill(10, 10, 118, 26, 2)
-      rect(10, 10, 118, 26, 8)
-      print("game over 😐", 40, 12)
-      print("press 🅾️ or ❎", 36, 19)
-    end
-  end
-
-  if cursor_loc != nil then
-    spr(2, cursor_loc.x, cursor_loc.y)
+  elseif g_puzzle_state.state == C_PUZZLE_STATE_GAME_OVER then
+    rectfill(10, 10, 118, 26, 2)
+    rect(10, 10, 118, 26, 8)
+    print("game over 😐", 40, 12)
+    print("press 🅾️ or ❎", 36, 19)
   end
 end
 
