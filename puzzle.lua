@@ -14,7 +14,7 @@ C_PUZ_CHIZ = 3
 function init_puzzle(index)
   menuitem(1, 'exit', function() init_puzzle_grid() end)
 
-  local puzzle = g_puzzles[index + 1]
+  local puzzle = parse_puzzle(g_puzzles[index + 1])
   g_puzzle_state = {
     puzzle = puzzle,
     grid = {},
@@ -151,7 +151,7 @@ end
 function is_game_won()
   for i=1, #g_puzzle_state.grid do
     for j=1, #g_puzzle_state.grid do
-      if g_puzzle_state.puzzle.image[i][j] == 1 and g_puzzle_state.grid[i][j] != C_PUZ_CHIZ then
+      if g_puzzle_state.puzzle.image[i][j] and g_puzzle_state.grid[i][j] != C_PUZ_CHIZ then
         return false
       end
     end
@@ -186,7 +186,7 @@ function update_puzzle()
       g_puzzle_state.grid[g_puzzle_state.y][g_puzzle_state.x] = C_PUZ_NULL
     end
   elseif btnp(5) then
-    if g_puzzle_state.puzzle.image[g_puzzle_state.y][g_puzzle_state.x] == 0 then
+    if not g_puzzle_state.puzzle.image[g_puzzle_state.y][g_puzzle_state.x] then
       g_puzzle_state.gaffes -= 1
 
       if g_puzzle_state.gaffes <= 0 then
