@@ -33,6 +33,9 @@ function draw_puzzle_grid()
   local cursor_y = start_y + (g_puzzle_grid_state.y * C_PUZZLE_TOTAL_SIZE) + 3
 
   spr(1, cursor_x, cursor_y)
+
+  local puzzle_index = g_puzzle_grid_state.y * C_PUZZLES_PER_ROW + g_puzzle_grid_state.x
+  print('puzzle '.. puzzle_index, 1, 1, 5)
 end
 
 function update_puzzle_grid()
@@ -42,7 +45,7 @@ function update_puzzle_grid()
 
   if btnp(0) and g_puzzle_grid_state.x > 0 then
     g_puzzle_grid_state.x -= 1
-  elseif btnp(1) and g_puzzle_grid_state.x < C_PUZZLES_PER_ROW - 1 then
+  elseif btnp(1) and g_puzzle_grid_state.x < C_PUZZLES_PER_ROW - 1  and g_puzzle_grid_state.x < #g_puzzles % C_PUZZLES_PER_ROW - 1 then
     g_puzzle_grid_state.x += 1
   elseif btnp(2) and g_puzzle_grid_state.y > 0 then
     g_puzzle_grid_state.y -= 1
