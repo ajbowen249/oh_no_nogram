@@ -24,3 +24,7 @@ Controls:
 - ⬅️➡️⬆️⬇️ Navigate cells
 - 🅾️ "Mark" selected cell - Marking does not count toward score; use it to track the game however you like.
 - ❎ "Punch" selected cell - Punching a cell that aught not to be punched will cost a Gaffe. Lose all your Gaffes, and it's game over!
+
+## Building
+
+A basic Python script called `build` handles the build process. It will require `pillow` version `11.1.0`, per the `requirements.txt`. Running `./build` will process the puzzle image files under `puzzles` into a file that Pico-8 can work with, and will also export a web build of the game. Pass `--clean` to delete the `out` folder, or `--no-export` to skip the web export.

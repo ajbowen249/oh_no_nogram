@@ -5,7 +5,7 @@ __lua__
 #include ./constants.lua
 #include ./utils.lua
 #include ./tutorial.lua
-#include ./puzzles.lua
+#include ./out/puzzles.lua
 #include ./puzzle.lua
 #include ./puzzle_grid.lua
 #include ./main_menu.lua

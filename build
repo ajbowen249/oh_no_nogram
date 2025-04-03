@@ -1,0 +1,101 @@
+#!python
+import os
+import os.path as path
+import subprocess
+import argparse
+from PIL import Image
+
+CWD = os.getcwd()
+OUT_DIR = path.join(CWD, 'out')
+
+def process_args():
+    parser = argparse.ArgumentParser(
+        prog='Auld Tomes Build Script',
+        description='Choreographs all tools into a sequential build.')
+
+    parser.add_argument('-c', '--clean', dest='clean', action='store_true', help='Just clean the build')
+    parser.add_argument('-n', '--no-export', dest='no_export', action='store_true', help='Don\'t export bin or html files')
+
+    result = parser.parse_args()
+
+    return result
+
+def run(args):
+    print(args)
+    result = subprocess.run(args)
+    if result.returncode != 0:
+        raise Exception('upstream process failed!')
+    return result
+
+def run_s(str):
+    print(str)
+    result = os.system(str)
+    if result != 0:
+        raise Exception('upstream process failed!')
+    return result
+
+def clean():
+    run(['rm', '-rf', OUT_DIR])
+
+def mkdir(p):
+    run(['mkdir', '-p', p])
+
+def overwrite_whole_file(file_path, content):
+    with open(file_path, 'w') as f:
+        f.write(content)
+
+def create_puzzle_file():
+    puzzles_path = path.join(CWD, 'puzzles')
+    puzzle_strings = []
+    for puzzle in os.listdir(puzzles_path):
+        with Image.open(path.join(puzzles_path, puzzle)) as imFile:
+            size = imFile.size[0]
+            if size != imFile.size[1]:
+                raise Exception(f'{puzzle} is not square! {imFile.size}')
+            elif size != 15:
+                raise Exception(f'{puzzle} is not unsupported size! {imFile.size}')
+
+            puzzle_string = f'{puzzle.split(".")[0]}|{size}|'
+            px = imFile.load()
+            for row in range(0, size):
+                for col in range(0, size):
+                    if px[col, row] == (0, 0, 0):
+                        puzzle_string += '1'
+                    else:
+                        puzzle_string += '0'
+
+            puzzle_strings.append(puzzle_string)
+
+    puzzles_file_text = f'''
+        g_all_puzzles_str = "{','.join(puzzle_strings)}"
+
+        g_puzzles = split(g_all_puzzles_str, ',', false)
+
+        '''
+
+    overwrite_whole_file(path.join(OUT_DIR, 'puzzles.lua'), puzzles_file_text)
+
+
+
+def full_build(export):
+    create_puzzle_file()
+    if export:
+        web_path = path.join(OUT_DIR, 'web')
+        mkdir(web_path)
+        run_s(f'pico8 oh_no_nogram.p8 -export "index.html"')
+        run(['mv', 'index.html', web_path])
+        run(['mv', 'index.js', web_path])
+
+def main():
+    args = process_args()
+
+    if args.clean:
+        clean()
+        return
+
+    clean()
+    mkdir(OUT_DIR)
+    full_build(not args.no_export)
+
+if __name__ == '__main__':
+    main()
