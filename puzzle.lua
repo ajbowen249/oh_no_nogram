@@ -84,7 +84,10 @@ function draw_puzzle()
       local y = start_y + ((i - 1) * C_CELL_SIZE)
 
       if not is_win then
-        rect(start_x, y + C_CELL_SIZE, board_end_x, y + C_CELL_SIZE, 4)
+        horizontal_dotted_line(y + C_CELL_SIZE, start_x, board_end_x, 4, 15)
+        if i % 5 == 0 then
+          rect(start_x, y + C_CELL_SIZE, board_end_x, y + C_CELL_SIZE, 4)
+        end
       end
 
       if i == g_puzzle_state.y then
@@ -101,7 +104,11 @@ function draw_puzzle()
         local x = start_x + ((j - 1) * C_CELL_SIZE)
         if i == 1 then
           if not is_win then
-            rect(x + C_CELL_SIZE, start_y, x + C_CELL_SIZE, board_end_y, 4)
+            vertical_dotted_line(x + C_CELL_SIZE, start_y, board_end_y, 4, 15)
+            if j % 5 == 0
+            then
+              rect(x + C_CELL_SIZE, start_y, x + C_CELL_SIZE, board_end_y, 4)
+            end
           end
 
           if j == g_puzzle_state.x then

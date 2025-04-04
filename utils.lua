@@ -45,3 +45,21 @@ function parse_puzzle(pstr)
 
   return puz
 end
+
+function vertical_dotted_line(x, y1, y2, col1, col2)
+  for y=y1,y2,2 do
+    pset(x, y, col1)
+    if y < y2 then
+      pset(x, y+1, col2)
+    end
+  end
+end
+
+function horizontal_dotted_line(y, x1, x2, col1, col2)
+  for x=x1,x2,2 do
+    pset(x, y, col1)
+    if x < x2 then
+      pset(x+1, y, col2)
+    end
+  end
+end
