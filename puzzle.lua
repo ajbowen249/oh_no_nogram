@@ -65,7 +65,8 @@ end
 
 function draw_puzzle()
   local is_win = g_puzzle_state.state == C_PUZZLE_STATE_WIN
-  if g_puzzle_state.state == C_PUZZLE_STATE_PLAYING or is_win then
+  local redraw_board = g_puzzle_state.state == C_PUZZLE_STATE_PLAYING or true
+  if redraw_board then
     cls(13)
 
     print("gaffes:", 1, 1, g_puzzle_state.gaffes > 3 and 4 or 8)
@@ -146,12 +147,12 @@ function draw_puzzle()
       print("solved!", 50, 12, 11)
       print(g_puzzle_state.puzzle.name, name_x, 19, 11)
       print("press 🅾️ or ❎", 36, 25, 11)
+    elseif g_puzzle_state.state == C_PUZZLE_STATE_GAME_OVER then
+      rectfill(10, 10, 118, 26, 2)
+      rect(10, 10, 118, 26, 8)
+      print("game over 😐", 40, 12, 8)
+      print("press 🅾️ or ❎", 36, 19, 8)
     end
-  elseif g_puzzle_state.state == C_PUZZLE_STATE_GAME_OVER then
-    rectfill(10, 10, 118, 26, 2)
-    rect(10, 10, 118, 26, 8)
-    print("game over 😐", 40, 12, 8)
-    print("press 🅾️ or ❎", 36, 19, 8)
   end
 end
 
@@ -189,6 +190,7 @@ function update_puzzle()
   if btnp(4) then
     if g_puzzle_state.grid[g_puzzle_state.y][g_puzzle_state.x] != C_PUZ_MARKED then
       g_puzzle_state.grid[g_puzzle_state.y][g_puzzle_state.x] = C_PUZ_MARKED
+      sfx(3)
     else
       g_puzzle_state.grid[g_puzzle_state.y][g_puzzle_state.x] = C_PUZ_NULL
     end
@@ -196,11 +198,20 @@ function update_puzzle()
     if not g_puzzle_state.puzzle.image[g_puzzle_state.y][g_puzzle_state.x] then
       g_puzzle_state.gaffes -= 1
 
+      if g_puzzle_state.gaffes >= 1 then
+        sfx(0)
+      elseif g_puzzle_state.gaffes == 0 then
+        sfx(1)
+      end
+
       if g_puzzle_state.gaffes <= 0 then
         g_puzzle_state.state = C_PUZZLE_STATE_GAME_OVER
       end
     else
-      g_puzzle_state.grid[g_puzzle_state.y][g_puzzle_state.x] = C_PUZ_CHIZ
+      if g_puzzle_state.grid[g_puzzle_state.y][g_puzzle_state.x] != C_PUZ_CHIZ then
+        g_puzzle_state.grid[g_puzzle_state.y][g_puzzle_state.x] = C_PUZ_CHIZ
+        sfx(2)
+      end
     end
   end
 
