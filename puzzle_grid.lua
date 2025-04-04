@@ -15,6 +15,10 @@ function init_puzzle_grid()
   g_game_state = C_PUZZLE_GRID
 end
 
+function get_puzzle_index()
+  return g_puzzle_grid_state.y * C_PUZZLES_PER_ROW + g_puzzle_grid_state.x
+end
+
 function draw_puzzle_grid()
   cls(12)
   local start_x = 32
@@ -34,7 +38,7 @@ function draw_puzzle_grid()
 
   spr(1, cursor_x, cursor_y)
 
-  local puzzle_index = g_puzzle_grid_state.y * C_PUZZLES_PER_ROW + g_puzzle_grid_state.x
+  local puzzle_index = get_puzzle_index()
   print('puzzle '.. puzzle_index + 1, 1, 1, 5)
 end
 
@@ -45,16 +49,24 @@ function update_puzzle_grid()
 
   if btnp(0) and g_puzzle_grid_state.x > 0 then
     g_puzzle_grid_state.x -= 1
-  elseif btnp(1) and g_puzzle_grid_state.x < C_PUZZLES_PER_ROW - 1  and g_puzzle_grid_state.x < #g_puzzles % C_PUZZLES_PER_ROW - 1 then
+  elseif btnp(1) and g_puzzle_grid_state.x < C_PUZZLES_PER_ROW - 1 then
     g_puzzle_grid_state.x += 1
+    local puzzle_index = get_puzzle_index()
+    if puzzle_index > #g_puzzles - 1 then
+      g_puzzle_grid_state.x -= 1
+    end
   elseif btnp(2) and g_puzzle_grid_state.y > 0 then
     g_puzzle_grid_state.y -= 1
   elseif btnp(3) and g_puzzle_grid_state.y < g_puzzle_rows - 1 then
     g_puzzle_grid_state.y += 1
+    local puzzle_index = get_puzzle_index()
+    if puzzle_index > #g_puzzles - 1 then
+      g_puzzle_grid_state.y -= 1
+    end
   end
 
   if btnp(5) then
-    local puzzle_index = g_puzzle_grid_state.y * C_PUZZLES_PER_ROW + g_puzzle_grid_state.x
+    local puzzle_index = get_puzzle_index()
     init_puzzle(puzzle_index)
   end
 end
