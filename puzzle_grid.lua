@@ -35,7 +35,7 @@ function draw_puzzle_grid()
   spr(1, cursor_x, cursor_y)
 
   local puzzle_index = g_puzzle_grid_state.y * C_PUZZLES_PER_ROW + g_puzzle_grid_state.x
-  print('puzzle '.. puzzle_index, 1, 1, 5)
+  print('puzzle '.. puzzle_index + 1, 1, 1, 5)
 end
 
 function update_puzzle_grid()

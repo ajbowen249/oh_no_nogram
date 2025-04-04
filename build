@@ -59,7 +59,7 @@ def create_puzzle_file():
             px = imFile.load()
             for row in range(0, size):
                 for col in range(0, size):
-                    if px[col, row] == (0, 0, 0):
+                    if px[col, row] == (0, 0, 0) or px[col, row] == (0, 0, 0, 255):
                         puzzle_string += '1'
                     else:
                         puzzle_string += '0'
