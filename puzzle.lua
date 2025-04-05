@@ -15,6 +15,7 @@ C_PUZ_CHIZ = 3
 g_active_pencil_spr = 2
 g_pencil_x_offset = 0
 g_pencil_y_offset = 0
+g_gaff_color = 4
 
 function init_puzzle(index)
   menuitem(1, 'exit', function() exit_puzzle() end)
@@ -79,8 +80,8 @@ function draw_puzzle()
   if redraw_board then
     rectfill(0, 0, 127, 127, 13)
 
-    print("gaffes:", 1, 1, g_puzzle_state.gaffes > 3 and 4 or 8)
-    print(g_puzzle_state.gaffes, 1, 8, g_puzzle_state.gaffes > 3 and 4 or 8)
+    print("gaffes:", 1, 1, g_puzzle_state.gaffes > 3 and g_gaff_color or 8)
+    print(g_puzzle_state.gaffes, 1, 8, g_puzzle_state.gaffes > 3 and g_gaff_color or 8)
 
     local start_x = 128 - C_BOARD_SIZE - 2
     local start_y = 128 - C_BOARD_SIZE - 2
@@ -216,6 +217,7 @@ function update_puzzle()
 
       if g_puzzle_state.gaffes >= 1 then
         sfx(0)
+        animate_gaff_blink()
       elseif g_puzzle_state.gaffes == 0 then
         sfx(1)
       end
@@ -265,4 +267,8 @@ function exit_puzzle()
   transition_out(function()
     init_puzzle_grid()
   end)
+end
+
+function animate_gaff_blink()
+  dispatch_draw_coroutine(co_animate({ 9, 4, 9, 4 }, .1, function(color) g_gaff_color = color end))
 end
