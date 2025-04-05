@@ -1,5 +1,7 @@
 # OH, NO! (nogram)
 
+![gameplay](gh_media/gameplay_gif_1.gif)
+
 This is a [Pico-8](https://www.lexaloffle.com/pico-8.php) implementation of the [Nonogram Puzzle](https://en.wikipedia.org/wiki/Nonogram).
 
 It's playable [here](https://ajbowen249.github.io/oh_no_nogram/)! _Note that it is currently in a very early state. See instructions below._
