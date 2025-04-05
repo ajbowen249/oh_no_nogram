@@ -6,6 +6,8 @@ function init_main_menu()
   }
 
   g_game_state = C_MAIN_MENU
+
+  transition_in(function() end)
 end
 
 g_main_menu_options = {
@@ -26,7 +28,7 @@ g_main_menu_options = {
 }
 
 function draw_main_menu()
-  cls(2)
+  rectfill(0, 0, 127, 127, 2)
 
   map(0, 0, 40, 10, 6, 3)
 
@@ -48,6 +50,8 @@ function update_main_menu()
   end
 
   if btnp(5) then
-    g_main_menu_options[g_main_menu_state.index].func()
+    transition_out(function()
+      g_main_menu_options[g_main_menu_state.index].func()
+    end)
   end
 end

@@ -13,6 +13,7 @@ function init_puzzle_grid()
   }
 
   g_game_state = C_PUZZLE_GRID
+  transition_in(function() end)
 end
 
 function get_puzzle_index()
@@ -20,7 +21,7 @@ function get_puzzle_index()
 end
 
 function draw_puzzle_grid()
-  cls(12)
+  rectfill(0, 0, 127, 127, 12)
   local start_x = 32
   local start_y = 16
 
@@ -44,7 +45,9 @@ end
 
 function update_puzzle_grid()
   if btnp(4) then
-    init_main_menu()
+    transition_out(function()
+      init_main_menu()
+    end)
   end
 
   if btnp(0) and g_puzzle_grid_state.x > 0 then
@@ -67,6 +70,8 @@ function update_puzzle_grid()
 
   if btnp(5) then
     local puzzle_index = get_puzzle_index()
-    init_puzzle(puzzle_index)
+    transition_out(function()
+      init_puzzle(puzzle_index)
+    end)
   end
 end

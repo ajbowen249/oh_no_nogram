@@ -6,6 +6,7 @@ C_BOARD_SIZE = C_CELL_SIZE * 15
 C_PUZZLE_STATE_PLAYING = 0
 C_PUZZLE_STATE_GAME_OVER = 1
 C_PUZZLE_STATE_WIN = 2
+C_PUZZLE_TRANSITION_OUT = 3
 
 C_PUZ_NULL = 0
 C_PUZ_MARKED = 1
@@ -16,7 +17,7 @@ g_pencil_x_offset = 0
 g_pencil_y_offset = 0
 
 function init_puzzle(index)
-  menuitem(1, 'exit', function() init_puzzle_grid() end)
+  menuitem(1, 'exit', function() exit_puzzle() end)
   g_active_pencil_spr = 2
   g_pencil_x_offset = 0
   g_pencil_y_offset = 0
@@ -56,6 +57,7 @@ function init_puzzle(index)
   end
 
   g_game_state = C_PUZZLE
+  transition_in(function() end)
 end
 
 function print_run_number(run_val, run_x, y, i)
@@ -72,9 +74,10 @@ end
 
 function draw_puzzle()
   local is_win = g_puzzle_state.state == C_PUZZLE_STATE_WIN
-  local redraw_board = g_puzzle_state.state == C_PUZZLE_STATE_PLAYING or true
+  local redraw_board = true
+
   if redraw_board then
-    cls(13)
+    rectfill(0, 0, 127, 127, 13)
 
     print("gaffes:", 1, 1, g_puzzle_state.gaffes > 3 and 4 or 8)
     print(g_puzzle_state.gaffes, 1, 8, g_puzzle_state.gaffes > 3 and 4 or 8)
@@ -178,9 +181,13 @@ end
 function update_puzzle()
   if g_puzzle_state.state == C_PUZZLE_STATE_GAME_OVER or g_puzzle_state.state == C_PUZZLE_STATE_WIN then
     if btnp(4) or btnp(5) then
-      init_puzzle_grid()
+      exit_puzzle()
     end
 
+    return
+  end
+
+  if g_puzzle_state.state == C_PUZZLE_TRANSITION_OUT then
     return
   end
 
@@ -250,4 +257,12 @@ end
 
 function animate_pencil_erase()
   dispatch_draw_coroutine(co_animate({ 19, 35, 51, 35, 2 }, 0, function(sprite) g_active_pencil_spr = sprite end))
+end
+
+function exit_puzzle()
+  g_puzzle_state.state = C_PUZZLE_TRANSITION_OUT
+
+  transition_out(function()
+    init_puzzle_grid()
+  end)
 end

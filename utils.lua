@@ -63,3 +63,31 @@ function horizontal_dotted_line(y, x1, x2, col1, col2)
     end
   end
 end
+
+function transition_out(callback)
+  dispatch_predraw_coroutine(cocreate(function()
+    for coord = 0, 64, 16 do
+      cls()
+      local size = 127 - (coord * 2)
+      clip(coord, coord, size, size)
+      yield()
+    end
+
+    clip()
+    callback()
+  end))
+end
+
+function transition_in(callback)
+  dispatch_predraw_coroutine(cocreate(function()
+    for coord = 64, 0, -16 do
+      cls()
+      local size = 127 - (coord * 2)
+      clip(coord, coord, size, size)
+      yield()
+    end
+
+    clip()
+    callback()
+  end))
+end

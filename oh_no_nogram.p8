@@ -28,6 +28,7 @@ g_update_funcs = {
 }
 
 function _draw()
+  predraw_dispatch()
   g_draw_funcs[g_game_state]()
   draw_dispatch()
 end
