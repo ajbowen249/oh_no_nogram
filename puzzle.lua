@@ -11,8 +11,11 @@ C_PUZ_NULL = 0
 C_PUZ_MARKED = 1
 C_PUZ_CHIZ = 3
 
+g_active_pencil_spr = 2
+
 function init_puzzle(index)
   menuitem(1, 'exit', function() init_puzzle_grid() end)
+  g_active_pencil_spr = 2
 
   local puzzle = parse_puzzle(g_puzzles[index + 1])
   g_puzzle_state = {
@@ -135,7 +138,7 @@ function draw_puzzle()
       end
 
       if cursor_loc != nil and not is_win then
-        spr(2, cursor_loc.x, cursor_loc.y)
+        spr(g_active_pencil_spr, cursor_loc.x, cursor_loc.y)
       end
     end
 
@@ -210,6 +213,7 @@ function update_puzzle()
     else
       if g_puzzle_state.grid[g_puzzle_state.y][g_puzzle_state.x] != C_PUZ_CHIZ then
         g_puzzle_state.grid[g_puzzle_state.y][g_puzzle_state.x] = C_PUZ_CHIZ
+        animate_pencil_punch()
         sfx(2)
       end
     end
@@ -218,4 +222,8 @@ function update_puzzle()
   if is_game_won() then
     g_puzzle_state.state = C_PUZZLE_STATE_WIN
   end
+end
+
+function animate_pencil_punch()
+  dispatch_draw_coroutine(co_animate({ 18, 34, 18, 2 }, 0, function(sprite) g_active_pencil_spr = sprite end))
 end
