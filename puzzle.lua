@@ -12,10 +12,14 @@ C_PUZ_MARKED = 1
 C_PUZ_CHIZ = 3
 
 g_active_pencil_spr = 2
+g_pencil_x_offset = 0
+g_pencil_y_offset = 0
 
 function init_puzzle(index)
   menuitem(1, 'exit', function() init_puzzle_grid() end)
   g_active_pencil_spr = 2
+  g_pencil_x_offset = 0
+  g_pencil_y_offset = 0
 
   local puzzle = parse_puzzle(g_puzzles[index + 1])
   g_puzzle_state = {
@@ -138,7 +142,7 @@ function draw_puzzle()
       end
 
       if cursor_loc != nil and not is_win then
-        spr(g_active_pencil_spr, cursor_loc.x, cursor_loc.y)
+        spr(g_active_pencil_spr, cursor_loc.x + g_pencil_x_offset, cursor_loc.y + g_pencil_y_offset)
       end
     end
 
@@ -193,6 +197,7 @@ function update_puzzle()
   if btnp(4) then
     if g_puzzle_state.grid[g_puzzle_state.y][g_puzzle_state.x] != C_PUZ_MARKED then
       g_puzzle_state.grid[g_puzzle_state.y][g_puzzle_state.x] = C_PUZ_MARKED
+      animate_pencil_mark()
       sfx(3)
     else
       g_puzzle_state.grid[g_puzzle_state.y][g_puzzle_state.x] = C_PUZ_NULL
@@ -226,4 +231,18 @@ end
 
 function animate_pencil_punch()
   dispatch_draw_coroutine(co_animate({ 18, 34, 18, 2 }, 0, function(sprite) g_active_pencil_spr = sprite end))
+end
+
+function animate_pencil_mark()
+  dispatch_draw_coroutine(co_animate({
+    { -2, 2 },
+    { -1, 1 },
+    {  -1, 1 },
+    { 2, -2 },
+    { 0, 0 },
+  }, 0, function(offset)
+      g_pencil_x_offset = offset[1]
+      g_pencil_y_offset = offset[2]
+    end)
+  )
 end
