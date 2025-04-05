@@ -200,6 +200,7 @@ function update_puzzle()
       animate_pencil_mark()
       sfx(3)
     else
+      animate_pencil_erase()
       g_puzzle_state.grid[g_puzzle_state.y][g_puzzle_state.x] = C_PUZ_NULL
     end
   elseif btnp(5) then
@@ -245,4 +246,8 @@ function animate_pencil_mark()
       g_pencil_y_offset = offset[2]
     end)
   )
+end
+
+function animate_pencil_erase()
+  dispatch_draw_coroutine(co_animate({ 19, 35, 51, 35, 2 }, 0, function(sprite) g_active_pencil_spr = sprite end))
 end
