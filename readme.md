@@ -30,3 +30,7 @@ Controls:
 ## Building
 
 A basic Python script called `build` handles the build process. It will require `pillow` version `11.1.0`, per the `requirements.txt`. Running `./build` will process the puzzle image files under `puzzles` into a file that Pico-8 can work with, and will also export a web build of the game. Pass `--clean` to delete the `out` folder, or `--no-export` to skip the web export.
+
+## Premium Puzzles
+
+This project will have a paid version and a demo version. The default build is the demo version. If the `-p` flag is passed, the build will attempt to load puzzles from `oh_no_nogram_premium_puzzles\puzzles`. That is a submodule only accessible to the author or collaborators. If you attempt to pull submodules, it should be disallowed.

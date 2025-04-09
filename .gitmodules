@@ -1,0 +1,3 @@
+[submodule "oh_no_nogram_premium_puzzles"]
+	path = oh_no_nogram_premium_puzzles
+	url = git@github.com:ajbowen249/oh_no_nogram_premium_puzzles.git

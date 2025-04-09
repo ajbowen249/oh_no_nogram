@@ -14,6 +14,7 @@ def process_args():
         description='Choreographs all tools into a sequential build.')
 
     parser.add_argument('-c', '--clean', dest='clean', action='store_true', help='Just clean the build')
+    parser.add_argument('-p', '--premium', dest='is_premium', action='store_true', help='Build with premium puzzles')
     parser.add_argument('-n', '--no-export', dest='no_export', action='store_true', help='Don\'t export bin or html files')
 
     result = parser.parse_args()
@@ -44,9 +45,7 @@ def overwrite_whole_file(file_path, content):
     with open(file_path, 'w') as f:
         f.write(content)
 
-def create_puzzle_file():
-    puzzles_path = path.join(CWD, 'puzzles')
-    puzzle_strings = []
+def iterate_puzzle_folder(puzzles_path, puzzle_strings):
     for puzzle in os.listdir(puzzles_path):
         with Image.open(path.join(puzzles_path, puzzle)) as imFile:
             size = imFile.size[0]
@@ -66,6 +65,19 @@ def create_puzzle_file():
 
             puzzle_strings.append(puzzle_string)
 
+def create_puzzle_file(is_premium):
+    puzzles_path = path.join(CWD, 'puzzles')
+    puzzle_strings = []
+    iterate_puzzle_folder(puzzles_path, puzzle_strings)
+
+    if is_premium:
+        premium_puzzles_path = path.join(CWD, 'oh_no_nogram_premium_puzzles', 'puzzles')
+        if not path.exists(premium_puzzles_path):
+            print('Premium puzzles not found.')
+            exit(-1)
+        else:
+            iterate_puzzle_folder(premium_puzzles_path, puzzle_strings)
+
     puzzles_file_text = f'''
         g_all_puzzles_str = "{','.join(puzzle_strings)}"
 
@@ -77,8 +89,8 @@ def create_puzzle_file():
 
 
 
-def full_build(export):
-    create_puzzle_file()
+def full_build(export, is_premium):
+    create_puzzle_file(is_premium)
     if export:
         web_path = path.join(OUT_DIR, 'web')
         mkdir(web_path)
@@ -95,7 +107,7 @@ def main():
 
     clean()
     mkdir(OUT_DIR)
-    full_build(not args.no_export)
+    full_build(not args.no_export, args.is_premium)
 
 if __name__ == '__main__':
     main()
