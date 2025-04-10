@@ -1,7 +1,6 @@
 g_puzzle_state = nil
 C_STARTING_GAFFES = 10
 C_CELL_SIZE = 6
-C_BOARD_SIZE = C_CELL_SIZE * 15
 
 C_PUZZLE_STATE_PLAYING = 0
 C_PUZZLE_STATE_GAME_OVER = 1
@@ -24,6 +23,8 @@ function init_puzzle(index)
   g_pencil_y_offset = 0
 
   local puzzle = parse_puzzle(g_puzzles[index + 1])
+  printh('here 1')
+  printh(puzzle.size)
   g_puzzle_state = {
     puzzle = puzzle,
     grid = {},
@@ -33,7 +34,9 @@ function init_puzzle(index)
     y = 1,
     gaffes = C_STARTING_GAFFES,
     state = C_PUZZLE_STATE_PLAYING,
+    board_size = C_CELL_SIZE * puzzle.size,
   }
+  printh('here 2')
 
   for i=1, #puzzle.image do
     local row = {}
@@ -83,10 +86,10 @@ function draw_puzzle()
     print("gaffes:", 1, 1, g_puzzle_state.gaffes > 3 and g_gaff_color or 8)
     print(g_puzzle_state.gaffes, 1, 8, g_puzzle_state.gaffes > 3 and g_gaff_color or 8)
 
-    local start_x = 128 - C_BOARD_SIZE - 2
-    local start_y = 128 - C_BOARD_SIZE - 2
-    local board_end_x = start_x + C_BOARD_SIZE
-    local board_end_y = start_y + C_BOARD_SIZE
+    local start_x = 36
+    local start_y = 36
+    local board_end_x = start_x + g_puzzle_state.board_size
+    local board_end_y = start_y + g_puzzle_state.board_size
 
     rectfill(start_x, start_y, board_end_x, board_end_y, 15)
     rect(start_x, start_y, board_end_x, board_end_y, 4)

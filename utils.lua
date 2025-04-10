@@ -30,12 +30,11 @@ end
 
 function parse_puzzle(pstr)
   local sp = split(pstr, '|', false)
-  local puz = { name = sp[1], image = {} }
-  local size = tonum(sp[2])
+  local puz = { name = sp[1], size = tonum(sp[2]), image = {} }
   local ii = 1
-  for ri=1, size do
+  for ri=1, puz.size do
     local row = {}
-    for ci=1, size do
+    for ci=1, puz.size do
       add(row, sp[3][ii] == '1')
       ii += 1
     end

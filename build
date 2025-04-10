@@ -17,6 +17,7 @@ def process_args():
 
     parser.add_argument('-c', '--clean', dest='clean', action='store_true', help='Just clean the build')
     parser.add_argument('-p', '--premium', dest='is_premium', action='store_true', help='Build with premium puzzles')
+    parser.add_argument('-i', '--include_tests', dest='include_tests', action='store_true', help='Include test puzzles')
     parser.add_argument('-n', '--no-export', dest='no_export', action='store_true', help='Don\'t export bin or html files')
 
     result = parser.parse_args()
@@ -104,13 +105,17 @@ class Puzzle:
 
         return get_run_totals(row_runs) + get_run_totals(col_runs)
 
-def iterate_puzzle_folder(puzzles_path, puzzle_info):
+def iterate_puzzle_folder(puzzles_path, puzzle_info, include_tests):
     for puzzle in os.listdir(puzzles_path):
+        name = puzzle.split(".")[0]
+        if name.startswith('test ') and not include_tests:
+            continue
+
         with Image.open(path.join(puzzles_path, puzzle)) as imFile:
             size = imFile.size[0]
             if size != imFile.size[1]:
                 raise Exception(f'{puzzle} is not square! {imFile.size}')
-            elif size != 15:
+            elif size != 5 and size != 10 and size != 15:
                 raise Exception(f'{puzzle} is not unsupported size! {imFile.size}')
 
             pixels = imFile.load()
@@ -121,12 +126,12 @@ def iterate_puzzle_folder(puzzles_path, puzzle_info):
                     grid_row.append(pixels[col, row] == (0, 0, 0) or pixels[col, row] == (0, 0, 0, 255))
                 grid.append(grid_row)
 
-            puzzle_info.append(Puzzle(puzzle.split(".")[0], size, grid))
+            puzzle_info.append(Puzzle(name, size, grid))
 
-def create_puzzle_file(is_premium):
+def create_puzzle_file(is_premium, include_tests):
     puzzles_path = path.join(CWD, 'puzzles')
     puzzle_info = []
-    iterate_puzzle_folder(puzzles_path, puzzle_info)
+    iterate_puzzle_folder(puzzles_path, puzzle_info, include_tests)
 
     if is_premium:
         premium_puzzles_path = path.join(CWD, 'oh_no_nogram_premium_puzzles', 'puzzles')
@@ -134,7 +139,7 @@ def create_puzzle_file(is_premium):
             print('Premium puzzles not found.')
             exit(-1)
         else:
-            iterate_puzzle_folder(premium_puzzles_path, puzzle_info)
+            iterate_puzzle_folder(premium_puzzles_path, puzzle_info, include_tests)
 
     sorted_info = sorted(puzzle_info, key=lambda p: p.difficulty)
 
@@ -155,8 +160,8 @@ def create_puzzle_file(is_premium):
 
     overwrite_whole_file(path.join(OUT_DIR, 'puzzle_guide.txt'), puzzle_guide_string)
 
-def full_build(export, is_premium):
-    create_puzzle_file(is_premium)
+def full_build(export, is_premium, include_tests):
+    create_puzzle_file(is_premium, include_tests)
     if export:
         web_path = path.join(OUT_DIR, 'web')
         mkdir(web_path)
@@ -173,7 +178,7 @@ def main():
 
     clean()
     mkdir(OUT_DIR)
-    full_build(not args.no_export, args.is_premium)
+    full_build(not args.no_export, args.is_premium, args.include_tests)
 
 if __name__ == '__main__':
     main()
