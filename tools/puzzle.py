@@ -1,6 +1,8 @@
 import os
 import sys
 
+from typing import List
+
 from PIL import Image
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
@@ -24,13 +26,13 @@ def get_list_runs(list):
     return runs
 
 class Puzzle:
-    def __init__(self, name, size, grid):
+    def __init__(self, name: str, size: int, grid: List[bool]):
         self.name = name
         self.size = size
         self.grid = grid
         self.difficulty = self.get_difficulty()
 
-    def get_string(self):
+    def get_string(self) -> str:
         puzzle_string = f'{self.name}|{self.size}|'
         for row in self.grid:
             for pixel in row:
@@ -38,7 +40,11 @@ class Puzzle:
 
         return puzzle_string
 
-    def get_difficulty(self):
+    @property
+    def is_tutorial(self) -> bool:
+        return self.name == 'tutorial'
+
+    def get_difficulty(self) -> int:
         row_runs = []
         for row in self.grid:
             row_runs.append(get_list_runs(row))
@@ -51,7 +57,7 @@ class Puzzle:
 
             col_runs.append(get_list_runs(column))
 
-        def get_run_totals(runs):
+        def get_run_totals(runs) -> int:
             total = 0
             for run in runs:
                 if len(run) == 1:
@@ -64,7 +70,7 @@ class Puzzle:
 
         return get_run_totals(row_runs) + get_run_totals(col_runs)
 
-def iterate_puzzle_folder(puzzles_path, puzzle_info, include_tests):
+def iterate_puzzle_folder(puzzles_path: path, puzzle_info: List[Puzzle], include_tests: bool):
     for puzzle in os.listdir(puzzles_path):
         name = puzzle.split(".")[0]
         if name.startswith('test ') and not include_tests:
@@ -87,9 +93,9 @@ def iterate_puzzle_folder(puzzles_path, puzzle_info, include_tests):
 
             puzzle_info.append(Puzzle(name, size, grid))
 
-def create_puzzle_file(is_premium, include_tests):
+def create_puzzle_file(is_premium: bool, include_tests: bool):
     puzzles_path = path.join(CWD, 'puzzles')
-    puzzle_info = []
+    puzzle_info: List[Puzzle] = []
     iterate_puzzle_folder(puzzles_path, puzzle_info, include_tests)
 
     if is_premium:
@@ -100,12 +106,16 @@ def create_puzzle_file(is_premium, include_tests):
         else:
             iterate_puzzle_folder(premium_puzzles_path, puzzle_info, include_tests)
 
-    sorted_info = sorted(puzzle_info, key=lambda p: p.difficulty)
+    tutorial_puzzle = [x for x in puzzle_info if x.is_tutorial][0]
+    game_puzzles = [x for x in puzzle_info if not x.is_tutorial]
+
+    sorted_info = sorted(game_puzzles, key=lambda p: p.difficulty)
 
     puzzles_file_text = f'''
-        g_all_puzzles_str = "{','.join(map(lambda p: p.get_string(), sorted_info))}"
+        g_all_puzzles_str = '{','.join(map(lambda p: p.get_string(), sorted_info))}'
 
         g_puzzles = split(g_all_puzzles_str, ',', false)
+        g_tutorial_puzzle = '{tutorial_puzzle.get_string()}'
 
         '''
 
