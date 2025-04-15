@@ -59,34 +59,27 @@ function tut_show_row_runs()
   g_tutorial_state.message = 'each number is a run of squares\nto punch. press ❎ to punch.'
   g_tutorial_state.row_runs_border = true
 
-  -- eeewwwww. Whatever; it works. Nested co_animate is causing issues.
-  dispatch_coroutine(co_delay(0.5, function()
-    dispatch_coroutine(co_delay(0.5, function()
-      g_tutorial_state.x = 2
-      g_tutorial_state.y = 2
+  dispatch_coroutine(cocreate(function()
+    delay(0.5)
 
-      dispatch_coroutine(co_delay(0.5, function()
-        try_punch_puzzle_space(g_tutorial_state)
+    g_tutorial_state.x = 2
+    g_tutorial_state.y = 2
+    delay(0.5)
 
-        dispatch_coroutine(co_delay(0.5, function()
-          g_tutorial_state.x = 3
+    try_punch_puzzle_space(g_tutorial_state)
+    delay(0.5)
 
-          dispatch_coroutine(co_delay(0.5, function()
-            g_tutorial_state.x = 4
+    g_tutorial_state.x = 3
+    delay(0.5)
 
-            dispatch_coroutine(co_delay(0.5, function()
-              try_punch_puzzle_space(g_tutorial_state)
+    g_tutorial_state.x = 4
+    delay(0.5)
 
-              dispatch_coroutine(co_delay(1, function()
-                g_tutorial_state.message = ''
-                g_tutorial_state.row_runs_border = false
-                dispatch_coroutine(co_delay(.5, tut_show_col_runs))
-              end))
-            end))
-          end))
-        end))
-      end))
-    end))
+    try_punch_puzzle_space(g_tutorial_state)
+    delay(1)
+    g_tutorial_state.message = ''
+    g_tutorial_state.row_runs_border = false
+    dispatch_coroutine(co_delay(.5, tut_show_col_runs))
   end))
 end
 
@@ -94,148 +87,146 @@ function tut_show_col_runs()
   g_tutorial_state.message = 'same deal for columns.'
   g_tutorial_state.col_runs_border = true
 
-  dispatch_coroutine(co_delay(0.5, function()
-    dispatch_coroutine(co_delay(0.5, function()
-      g_tutorial_state.y = 3
+  dispatch_coroutine(cocreate(function()
+    delay(0.5)
 
-      dispatch_coroutine(co_delay(0.5, function()
-        g_tutorial_state.y = 4
+    g_tutorial_state.y = 3
+    delay(0.5)
 
-          dispatch_coroutine(co_delay(0.5, function()
-            g_tutorial_state.y = 5
+    g_tutorial_state.y = 4
+    delay(0.5)
 
-          dispatch_coroutine(co_delay(0.5, function()
-            try_punch_puzzle_space(g_tutorial_state)
+    g_tutorial_state.y = 5
+    delay(0.5)
 
-            dispatch_coroutine(co_delay(1, function()
-              g_tutorial_state.message = ''
-              g_tutorial_state.col_runs_border = false
-              dispatch_coroutine(co_delay(.5, tut_show_long_row))
-            end))
-          end))
-        end))
-      end))
-    end))
+    try_punch_puzzle_space(g_tutorial_state)
+    delay(1)
+
+    g_tutorial_state.message = ''
+    g_tutorial_state.col_runs_border = false
+    dispatch_coroutine(co_delay(.5, tut_show_long_row))
   end))
 end
 
 function tut_show_long_row()
   g_tutorial_state.message = 'bigger numbers mean longer\nspans.'
 
-  dispatch_coroutine(co_delay(0.5, function()
-    dispatch_coroutine(co_delay(0.5, function()
-      g_tutorial_state.x = 3
+  dispatch_coroutine(cocreate(function()
+    delay(0.5)
 
-      dispatch_coroutine(co_delay(0.5, function()
-        try_punch_puzzle_space(g_tutorial_state)
+    g_tutorial_state.x = 3
+    delay(0.5)
 
-          dispatch_coroutine(co_delay(0.5, function()
-            g_tutorial_state.x = 2
+    try_punch_puzzle_space(g_tutorial_state)
+    delay(0.5)
 
-          dispatch_coroutine(co_delay(0.5, function()
-            try_punch_puzzle_space(g_tutorial_state)
+    g_tutorial_state.x = 2
+    delay(0.5)
 
-            dispatch_coroutine(co_delay(1, function()
-              g_tutorial_state.message = ''
-              dispatch_coroutine(co_delay(.5, tut_show_gaffe))
-            end))
-          end))
-        end))
-      end))
-    end))
+    try_punch_puzzle_space(g_tutorial_state)
+    delay(2)
+
+    g_tutorial_state.message = ''
+    dispatch_coroutine(co_delay(.5, tut_show_gaffe))
   end))
 end
 
 function tut_show_gaffe()
   g_tutorial_state.message = 'careful! punching the wrong\nspace will cost a gaffe!'
 
-  dispatch_coroutine(co_delay(0.5, function()
-    dispatch_coroutine(co_delay(0.5, function()
-      g_tutorial_state.y = 4
+  dispatch_coroutine(cocreate(function()
+    delay(0.5)
 
-      dispatch_coroutine(co_delay(0.5, function()
-        try_punch_puzzle_space(g_tutorial_state)
+    g_tutorial_state.y = 4
+    delay(0.5)
 
-        dispatch_coroutine(co_delay(2, function()
-          g_tutorial_state.message = ''
-          dispatch_coroutine(co_delay(.5, tut_show_mark))
-        end))
-      end))
-    end))
+    try_punch_puzzle_space(g_tutorial_state)
+    delay(2)
+
+    g_tutorial_state.message = ''
+    dispatch_coroutine(co_delay(.5, tut_show_mark))
   end))
 end
 
 function tut_show_mark()
-  g_tutorial_state.message = 'press 🅾️ to mark or unmark a\nspace. marking does not affect\nthe game.'
+  g_tutorial_state.message = 'press 🅾️ to mark or unmark a\nspace. marking does not affect\nthe game. use it however you\nlike!'
 
-  dispatch_coroutine(co_delay(0.5, function()
+  dispatch_coroutine(cocreate(function()
+    delay(0.5)
+
     g_tutorial_state.y = 3
+    delay(0.5)
 
-    dispatch_coroutine(co_delay(0.5, function()
-      mark_puzzle_space(g_tutorial_state)
+    g_tutorial_state.x = 2
+    delay(0.5)
 
-      dispatch_coroutine(co_delay(0.5, function()
-        g_tutorial_state.x = 3
+    g_tutorial_state.x = 1
+    delay(0.5)
 
-        dispatch_coroutine(co_delay(0.5, function()
-          mark_puzzle_space(g_tutorial_state)
+    mark_puzzle_space(g_tutorial_state)
+    delay(0.5)
 
-          dispatch_coroutine(co_delay(3, function()
-            g_tutorial_state.message = ''
-            dispatch_coroutine(co_delay(.5, tut_finish_puzzle))
-          end))
-        end))
-      end))
-    end))
+    g_tutorial_state.x = 2
+    delay(0.5)
+
+    mark_puzzle_space(g_tutorial_state)
+    delay(0.5)
+
+    g_tutorial_state.x = 3
+    delay(0.5)
+
+    mark_puzzle_space(g_tutorial_state)
+    delay(0.5)
+
+    g_tutorial_state.x = 4
+    delay(0.5)
+
+    mark_puzzle_space(g_tutorial_state)
+    delay(0.5)
+
+    g_tutorial_state.x = 5
+    delay(0.5)
+
+    mark_puzzle_space(g_tutorial_state)
+    delay(0.5)
+
+    delay(1)
+
+    g_tutorial_state.message = ''
+    dispatch_coroutine(co_delay(.5, tut_finish_puzzle))
   end))
 end
 
 function tut_finish_puzzle()
-  dispatch_coroutine(co_delay(0.5, function()
-    dispatch_coroutine(co_delay(0.5, function()
-      g_tutorial_state.x = 2
+  g_tutorial_state.message = 'that\'s all. have fun!'
 
-      dispatch_coroutine(co_delay(0.5, function()
-        g_tutorial_state.x = 1
+  dispatch_coroutine(cocreate(function()
+    delay(0.5)
+    g_tutorial_state.y = 4
+    delay(0.5)
 
-        dispatch_coroutine(co_delay(0.5, function()
-          g_tutorial_state.y = 4
+    try_punch_puzzle_space(g_tutorial_state)
+    delay(0.5)
 
-          dispatch_coroutine(co_delay(0.5, function()
-            try_punch_puzzle_space(g_tutorial_state)
+    g_tutorial_state.x = 4
+    delay(0.5)
 
-            dispatch_coroutine(co_delay(0.5, function()
-              g_tutorial_state.x = 2
+    g_tutorial_state.x = 3
+    delay(0.5)
 
-              dispatch_coroutine(co_delay(0.5, function()
-                g_tutorial_state.x = 3
+    g_tutorial_state.x = 2
+    delay(0.5)
 
-                dispatch_coroutine(co_delay(0.5, function()
-                  g_tutorial_state.x = 4
+    g_tutorial_state.x = 1
+    delay(0.5)
 
-                  dispatch_coroutine(co_delay(0.5, function()
-                    g_tutorial_state.x = 5
+    try_punch_puzzle_space(g_tutorial_state)
+    g_tutorial_state.is_win = true
 
-                    dispatch_coroutine(co_delay(0.5, function()
-                      try_punch_puzzle_space(g_tutorial_state)
-                      g_tutorial_state.is_win = true
+    delay(2)
 
-                      dispatch_coroutine(co_delay(.5, function()
-                        g_tutorial_state.message = 'that\'s all. have fun!'
-                        dispatch_coroutine(co_delay(4, function()
-                          transition_out(function()
-                            init_main_menu()
-                          end)
-                        end))
-                      end))
-                    end))
-                  end))
-                end))
-              end))
-            end))
-          end))
-        end))
-      end))
-    end))
+    transition_out(function()
+      init_main_menu()
+    end)
   end))
 end

@@ -6,12 +6,18 @@ g_managed_coroutines = {}
 g_managed_draw_coroutines = {}
 g_managed_predraw_coroutines = {}
 
-function co_delay(dt, callback)
-  return cocreate(function()
-    local start = time()
+-- note: only works when called within a coroutine!
+function delay(dt)
+  local start = time()
     while time() - start <= dt do
       yield()
     end
+end
+
+function co_delay(dt, callback)
+  return cocreate(function()
+    local start = time()
+    delay(dt)
 
     callback()
   end)
@@ -22,9 +28,7 @@ function co_animate(frames, dt, callback)
     for i=1,#frames do
       frame = frames[i]
       local start = time()
-      while time() - start <= dt do
-        yield()
-      end
+      delay(dt)
 
       callback(frame, i, i == #frames)
     end
