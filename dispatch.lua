@@ -19,13 +19,14 @@ end
 
 function co_animate(frames, dt, callback)
   return cocreate(function()
-    for frame in all(frames) do
+    for i=1,#frames do
+      frame = frames[i]
       local start = time()
       while time() - start <= dt do
         yield()
       end
 
-      callback(frame)
+      callback(frame, i, i == #frames)
     end
   end)
 end

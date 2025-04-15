@@ -7,6 +7,7 @@ __lua__
 #include ./utils.lua
 #include ./tutorial.lua
 #include ./out/puzzles.lua
+#include ./puzzle_common.lua
 #include ./puzzle.lua
 #include ./puzzle_grid.lua
 #include ./main_menu.lua
