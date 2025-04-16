@@ -10,13 +10,13 @@ C_PUZ_NULL = 0
 C_PUZ_MARKED = 1
 C_PUZ_CHIZ = 3
 
-g_active_pencil_spr = 2
+g_active_pencil_spr = 16
 g_pencil_x_offset = 0
 g_pencil_y_offset = 0
 g_gaff_color = 4
 
 function create_puzzle_state(raw_puzzle)
-  g_active_pencil_spr = 2
+  g_active_pencil_spr = 16
   g_pencil_x_offset = 0
   g_pencil_y_offset = 0
 
@@ -59,6 +59,15 @@ function create_puzzle_state(raw_puzzle)
   return state
 end
 
+g_number_sprites = {
+  [10] = 18,
+  [11] = 34,
+  [12] = 50,
+  [13] = 3,
+  [14] = 19,
+  [15] = 35,
+}
+
 function print_run_number(run_val, run_x, y, i)
   if run_val < 10 then
     print(run_val, run_x, y, i % 2 == 0 and 4 or 15)
@@ -66,7 +75,7 @@ function print_run_number(run_val, run_x, y, i)
     if i % 2 != 0 then
       pal(4, 15)
     end
-    spr(run_val - 4, run_x, y)
+    spr(g_number_sprites[run_val], run_x, y)
     pal()
   end
 end
@@ -132,9 +141,10 @@ function draw_puzzle_common(state)
         end
 
         if cell == C_PUZ_MARKED and not state.is_win then
-          spr(4, x + 1, y + 1)
+          spr(2, x + 1, y + 1)
         elseif cell == C_PUZ_CHIZ then
-          spr(state.is_win and 21 or 5, x + 1, y + 1)
+          local offset = state.is_win and 6 or 5
+          rectfill(x + 1, y + 1, x + offset, y + offset, 1)
         end
 
         if i == state.y and j == state.x then
@@ -215,7 +225,7 @@ function is_game_won(state)
 end
 
 function animate_pencil_punch()
-  dispatch_draw_coroutine(co_animate({ 18, 34, 18, 2 }, 0, function(sprite) g_active_pencil_spr = sprite end))
+  dispatch_draw_coroutine(co_animate({ 32, 48, 32, 16 }, 0, function(sprite) g_active_pencil_spr = sprite end))
 end
 
 function animate_pencil_mark()
@@ -233,7 +243,7 @@ function animate_pencil_mark()
 end
 
 function animate_pencil_erase()
-  dispatch_draw_coroutine(co_animate({ 19, 35, 51, 35, 2 }, 0, function(sprite) g_active_pencil_spr = sprite end))
+  dispatch_draw_coroutine(co_animate({ 17, 33, 49, 33, 16 }, 0, function(sprite) g_active_pencil_spr = sprite end))
 end
 
 function animate_gaff_blink()
