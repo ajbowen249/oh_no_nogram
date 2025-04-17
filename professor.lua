@@ -1,11 +1,15 @@
 g_prof_is_talking = false
 g_prof_blink_level = 0
 g_prof_blink_is_blinking = false
+g_prof_larm = 6
+g_prof_rarm = 6
 
 function draw_professor(x, y, p)
   pal()
   pal(11, g_prof_is_talking and 1 or 15)
-  spr(4, x, y, 4, 4)
+  spr(4, x + 10, y, 2, 4)
+  spr(g_prof_larm, x - 6, y + 11, 2, 2)
+  spr(g_prof_rarm, x + 20, y + 11, 2, 2, true)
   pal()
 
   if g_prof_blink_level > 0 then
@@ -46,4 +50,11 @@ end
 
 function stop_prof_blink()
   g_prof_blink_is_blinking = false
+end
+
+function animate_prof_point_left()
+  g_prof_blink_is_blinking = true
+  dispatch_draw_coroutine(co_animate({6, 38, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 38, 6}, 0.1, function(arm)
+    g_prof_larm = arm
+  end))
 end
