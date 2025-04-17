@@ -33,7 +33,8 @@ class Puzzle:
         self.difficulty = self.get_difficulty()
 
     def get_string(self) -> str:
-        puzzle_string = f'{self.name}|{self.size}|'
+        escaped_name = self.name.replace("'", "\\'")
+        puzzle_string = f'{escaped_name}|{self.size}|'
         for row in self.grid:
             for pixel in row:
                 puzzle_string += '1' if pixel else '0'

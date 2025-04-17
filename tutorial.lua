@@ -5,6 +5,7 @@ function init_tutorial()
   g_tutorial_state.message = ''
   g_tutorial_state.row_runs_border = false
   g_tutorial_state.col_runs_border = false
+  animate_prof_blink()
 
   g_game_state = C_TUTORIAL
   transition_in(function()
@@ -162,6 +163,7 @@ function tut_finish_puzzle()
     { 1, 4 },
     { true },
   }, 0.5, 2, function()
+    stop_prof_blink()
     transition_out(function()
       init_main_menu()
     end)
