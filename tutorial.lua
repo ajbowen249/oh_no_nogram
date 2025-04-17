@@ -15,7 +15,12 @@ end
 function draw_tutorial()
   draw_puzzle_common(g_tutorial_state)
 
-  print(g_tutorial_state.message, 1, 70, 7)
+  draw_professor(72, 35)
+
+  if g_tutorial_state.message != '' then
+    draw_message_box(g_tutorial_state.message, 75)
+    spr(51, 93, 63)
+  end
 
   if g_tutorial_state.row_runs_border then
     rect(24, 34, 35, 66, 11)
@@ -62,6 +67,7 @@ end
 
 function tut_show_movement()
   g_tutorial_state.message = 'use ⬅️⬆️➡️⬇️ to move the pencil'
+  animate_prof_talk(22)
 
   tut_animation({
     { 2, 1 },
@@ -77,6 +83,7 @@ end
 function tut_show_row_runs()
   g_tutorial_state.message = 'each number is a run of squares\nto punch. press ❎ to punch.'
   g_tutorial_state.row_runs_border = true
+  animate_prof_talk(26)
 
   tut_animation({
     { 2, 2 },
@@ -88,8 +95,9 @@ function tut_show_row_runs()
 end
 
 function tut_show_col_runs()
-  g_tutorial_state.message = 'same deal for columns.'
+  g_tutorial_state.message = 'same goes for columns.'
   g_tutorial_state.col_runs_border = true
+  animate_prof_talk(10)
 
   tut_animation({
     { 4, 2 },
@@ -102,6 +110,7 @@ end
 
 function tut_show_long_row()
   g_tutorial_state.message = 'bigger numbers mean longer\nspans.'
+  animate_prof_talk(14)
 
   tut_animation({
     { 3, 5 },
@@ -113,6 +122,7 @@ end
 
 function tut_show_gaffe()
   g_tutorial_state.message = 'careful! punching the wrong\nspace will cost a gaffe!'
+  animate_prof_talk(22)
 
   tut_animation({
     { 2, 4 },
@@ -122,6 +132,7 @@ end
 
 function tut_show_mark()
   g_tutorial_state.message = 'press 🅾️ to mark or unmark a\nspace. marking does not affect\nthe game. use it however you\nlike!'
+  animate_prof_talk(32)
 
   tut_animation({
     { 2, 3 },
@@ -140,6 +151,7 @@ end
 
 function tut_finish_puzzle()
   g_tutorial_state.message = 'that\'s all. have fun!'
+  animate_prof_talk(8)
 
   tut_animation({
     { 5, 4 },
