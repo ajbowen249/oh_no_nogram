@@ -31,6 +31,7 @@ function draw_main_menu()
   rectfill(0, 0, 127, 127, 2)
 
   map(0, 0, 40, 10, 6, 3)
+  spr(64, 16, 5, 12, 4)
 
   for i,option in ipairs(g_main_menu_options) do
     local fill_color = i == g_main_menu_state.index and 10 or 2
