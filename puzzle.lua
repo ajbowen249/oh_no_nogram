@@ -1,8 +1,6 @@
 g_puzzle_state = nil
 
 function init_puzzle(index)
-  menuitem(1, 'to puzzle selection', function() exit_puzzle() end)
-
   g_puzzle_state = create_puzzle_state(g_puzzles[index + 1])
 
   g_game_state = C_PUZZLE
@@ -16,7 +14,7 @@ end
 function update_puzzle()
   if g_puzzle_state.state == C_PUZZLE_STATE_GAME_OVER or g_puzzle_state.state == C_PUZZLE_STATE_WIN then
     if btnp(4) or btnp(5) then
-      exit_puzzle()
+      to_puzzle_grid_from_anywhere()
     end
 
     return
@@ -46,12 +44,4 @@ function update_puzzle()
     g_puzzle_state.is_win = true
     g_puzzle_state.state = C_PUZZLE_STATE_WIN
   end
-end
-
-function exit_puzzle()
-  g_puzzle_state.state = C_PUZZLE_TRANSITION_OUT
-
-  transition_out(function()
-    init_puzzle_grid()
-  end)
 end

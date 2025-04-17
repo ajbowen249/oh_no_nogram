@@ -132,3 +132,13 @@ function draw_message_box(msg, y)
   local x = ((127 - width) / 2) + 1
   print(msg, x, y, 0)
 end
+
+function to_puzzle_grid_from_anywhere()
+  if g_puzzle_state != nil then
+    g_puzzle_state.state = C_PUZZLE_TRANSITION_OUT
+  end
+
+  transition_out(function()
+    init_puzzle_grid()
+  end)
+end

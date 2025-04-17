@@ -11,8 +11,10 @@ __lua__
 #include ./puzzle_common.lua
 #include ./puzzle.lua
 #include ./puzzle_grid.lua
+#include ./cart_menu.lua
 #include ./main_menu.lua
 
+init_cart_menu()
 init_main_menu()
 
 g_draw_funcs = {
