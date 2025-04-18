@@ -3,7 +3,12 @@ g_intro_state = nil
 function init_intro()
   g_intro_state = {
     drawfunc = nil,
+    stars = {},
   }
+
+  for i = 1, 40 do
+    add(g_intro_state.stars, { rnd(127), rnd(64) })
+  end
 
   g_game_state = C_INTRO
 
@@ -41,9 +46,13 @@ function draw_museum_exterior(x, y)
 
   rectfill(x - 12, y + 30, x - 3, y + 46, 10)
   rect(x - 12, y + 30, x - 3, y + 46, 5)
+  rect(x - 12, y + 38, x - 3, y + 39, 5)
+  rect(x - 8, y + 30, x - 7, y + 46, 5)
 
   rectfill(x + 52, y + 30, x + 61, y + 46, 10)
   rect(x + 52, y + 30, x + 61, y + 46, 5)
+  rect(x + 52, y + 38, x + 61, y + 39, 5)
+  rect(x + 56, y + 30, x + 57, y + 46, 5)
 
   spr(128, x, y, 7, 3)
   spr(46, x, y + 24, 2, 2)
@@ -69,6 +78,11 @@ end
 function intro_exterior()
   g_intro_state.drawfunc = function()
     cls(1)
+
+    for star in all(g_intro_state.stars) do
+      pset(star[1], star[2], 7)
+    end
+
     rectfill(0, 64, 127, 127, 3)
 
     rectfill(0, 109, 127, 127, 0)
