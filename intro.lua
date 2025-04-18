@@ -27,6 +27,12 @@ function update_intro()
 end
 
 function draw_museum_exterior(x, y)
+  circfill(x - 7, y + 24, 7, 6)
+  circ(x - 7, y + 24, 7, 5)
+
+  circfill(x + 56, y + 24, 7, 6)
+  circ(x + 56, y + 24, 7, 5)
+
   rectfill(x - 15, y + 24, x + 64, y + 55, 6)
   rect(x - 15, y + 24, x + 64, y + 55, 5)
   rectfill(x, y + 24, x + 49, y + 55, 1)
@@ -64,6 +70,14 @@ function intro_exterior()
   g_intro_state.drawfunc = function()
     cls(1)
     rectfill(0, 64, 127, 127, 3)
+
+    rectfill(0, 109, 127, 127, 0)
+
+    rectfill(0, 100, 127, 110, 6)
+    rect(0, 100, 127, 110, 5)
+
+    spr(76, 20, 10, 2, 2)
+
     draw_museum_exterior(38, 35)
   end
 end
